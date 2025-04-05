@@ -34,6 +34,10 @@ npm run reset-project
 ```
 Este comando moverá o código inicial para o diretório **app-example** e criará um diretório app em branco, onde você poderá começar a desenvolver.
 
+## ⚙️ Git Clone :
+
+https://github.com/GustavoLealDev/CuidarMais.git
+
 ## Saiba mais 
 
 Para saber mais sobre como desenvolver um projeto com o Expo, consulte:
