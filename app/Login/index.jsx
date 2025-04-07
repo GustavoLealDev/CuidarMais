@@ -8,7 +8,7 @@ export default function LoginScreen() {
     <View style={styles.container}>
       <View style={{
         display: 'flex',
-        alignItems: 'center'
+        alignItems: 'center',
       }}>
       <Image 
         source={require('../../assets/images/Cuidar+.png')} 
@@ -53,9 +53,9 @@ const styles = StyleSheet.create({
         alignItems: 'center'
     },
     logo: {
-        width: 100,
-        height: 100,
-        marginBottom: 30,
+        width: 350,
+        height: 350, 
+        marginBottom: 1,
     },
     title: {
         fontSize: 32,
