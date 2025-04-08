@@ -1,8 +1,10 @@
 import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
 import React from 'react';
 import Colors from '../../Const/Colors';
+import { useRouter } from 'expo-router';
 
 export default function LoginScreen() {
+  const router=useRouter();
   return (
     <View>
     <View style={styles.container}>
@@ -29,13 +31,13 @@ export default function LoginScreen() {
         style={styles.button}
         activeOpacity={0.8}
       >
-        <Text style={styles.buttonText}>
+        <Text style={styles.buttonText} onPress={()=>router.push('/Login/Entrar')}>
           Continuar
         </Text>
       </TouchableOpacity>
       
       <Text style={styles.footerText}>
-        Ao clicar no botão 'Continuar', você concorda com nossos{''}
+        Ao clicar em 'Continuar', você concorda com nossos
         <Text style={styles.underlineText} > termos e condições</Text>.
       </Text>
     </View>
