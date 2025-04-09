@@ -3,13 +3,21 @@ import React from 'react';
 import Colors from '../../Const/Colors';
 import { useRouter } from 'expo-router';
 
-export default function Login() {
+export default function Cadastro() {
   const router = useRouter();
   return (
     <View style={styles.container}>
-      <Text style={styles.textHeader}>Entrar</Text>
-      <Text style={styles.subHeader}>Bem-Vindo</Text>
+      <Text style={styles.textHeader}>Crie uma nova conta</Text>
       
+      <View style={styles.inputContainer}>
+        <Text style={styles.label}>Nome Completo</Text>
+        <TextInput 
+          placeholder='Ex. João Silva' 
+          style={styles.textInput}
+          placeholderTextColor={Colors.GRAY}
+        />
+      </View>
+
       <View style={styles.inputContainer}>
         <Text style={styles.label}>Email</Text>
         <TextInput 
@@ -40,9 +48,9 @@ export default function Login() {
       <TouchableOpacity 
         style={styles.buttonCreate}
         activeOpacity={0.8}
-        onPress={()=>router.push('/Login/Cadastro')}
+        onPress={()=>router.push('/Login/Entrar')}
       >
-        <Text style={styles.buttonCreateText}>Cadastre-se</Text>
+        <Text style={styles.buttonCreateText}>Criar Conta</Text>
       </TouchableOpacity>
     </View>
   );
