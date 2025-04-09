@@ -1,10 +1,40 @@
-import { View, Text, StyleSheet, TextInput, TouchableOpacity } from 'react-native';
-import React from 'react';
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, Alert, ToastAndroid } from 'react-native';
+import React, { useState } from 'react';
 import Colors from '../../Const/Colors';
 import { useRouter } from 'expo-router';
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import { auth } from '../../configs/Firebase';
 
 export default function Login() {
   const router = useRouter();
+
+  const[email,setEmail]=useState();
+  const[senha,setSenha]=useState();
+
+  const LoginClick=()=>{
+
+    if(!email || !senha){
+          Alert.alert('Atenção', 'Preencha todos os campos');
+          ToastAndroid.show('Preencha todos os campos',ToastAndroid.BOTTOM)
+          return;
+        }
+
+    signInWithEmailAndPassword(auth, email, senha)
+      .then((userCredential) => {
+    const user = userCredential.user;
+    console.log(user);
+    router.replace('TabNav')
+    })
+    .catch((error) => {
+    const errorCode = error.code;
+    const errorMessage = error.message;
+    if(errorCode=='auth/invalid-credential'){
+            Alert.alert('Error', 'Email ou senha invalido!!');
+            ToastAndroid.show('Esse email já está em uso',ToastAndroid.BOTTOM)
+          }
+  });
+  
+}
   return (
     <View style={styles.container}>
       <Text style={styles.textHeader}>Entrar</Text>
@@ -15,6 +45,7 @@ export default function Login() {
         <TextInput 
           placeholder='Email' 
           style={styles.textInput}
+          onChangeText={(value)=>setEmail(value)}
           placeholderTextColor={Colors.GRAY}
         />
       </View>
@@ -25,6 +56,7 @@ export default function Login() {
           placeholder='Senha' 
           secureTextEntry={true}
           style={styles.textInput}
+          onChangeText={(value)=>setSenha(value)}
           placeholderTextColor={Colors.GRAY}
         />
       </View>
@@ -32,7 +64,7 @@ export default function Login() {
       <TouchableOpacity 
         style={styles.button}
         activeOpacity={0.8}
-        onPress={() => router.push('/Home')}
+        onPress={LoginClick}
       >
         <Text style={styles.buttonText}>Login</Text>
       </TouchableOpacity>

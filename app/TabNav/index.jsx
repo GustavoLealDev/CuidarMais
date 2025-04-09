@@ -6,7 +6,6 @@ export default function Home() {
   return (
     <View>
       <Text>Home</Text>
-      <Redirect href={'Login'}/>
     </View>
   );
 }
