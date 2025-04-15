@@ -8,7 +8,7 @@ export default function Home() {
   return (
     <View>
       <Text>Home</Text>
-      <Button title='Sair' onPress={()=> signOut()}/>
+      <Button title='Sair' onPress={()=> signOut(auth)}/>
     </View>
   );
 }

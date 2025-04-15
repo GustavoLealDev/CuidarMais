@@ -24,7 +24,6 @@ export default function TabBar() {
     }
   })
   
-  
   return (
     <Tabs screenOptions={{
       headerShown: false
@@ -41,7 +40,7 @@ export default function TabBar() {
         options={{
           tabBarLabel:'Adicionar',
           tabBarIcon:({color,size})=>(
-            <FontAwesome name="user-plus" size={size} color={color} />
+            <AntDesign name="pluscircle" size={24} color="black" />
           )
         }}>
         </Tabs.Screen>
