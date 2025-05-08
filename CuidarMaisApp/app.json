@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "Teste1",
-    "slug": "Teste1",
+    "name": "CuidarMais",
+    "slug": "CuidarMais",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "teste1",
+    "scheme": "CuidarMais",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
