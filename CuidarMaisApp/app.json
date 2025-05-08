@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "CuidarMaisApp",
-    "slug": "CuidarMaisApp",
+    "name": "Teste1",
+    "slug": "Teste1",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "cuidarmaisapp",
+    "scheme": "teste1",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
