@@ -6,13 +6,12 @@ const { width } = Dimensions.get('window');
 
 export default function AuthScreen() {
     return (
-      <LinearGradient colors={["4CAF50", "#2E7D32"]}>
-        <View>
+      <LinearGradient colors={["#4CAF50", "#2E7D32"]} style={{flex: 1}}>
+        <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
             <View>
                 <Ionicons name='medical' size={80} color="white"/>
             </View>
         </View>
-        
       </LinearGradient>
     );
 }

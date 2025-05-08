@@ -6,11 +6,11 @@ import { Animated, StyleSheet, Text, View } from 'react-native';
 export default function Screen() {
     const fadeAnimation = useRef(new Animated.Value(0)).current;
     const scaleAnimation = useRef(new Animated.Value(0.5)).current;
-    const router = useRouter()
+    const router = useRouter();
 
     useEffect(() => {
         Animated.parallel([
-            Animated.timing(fadeAnimation,{
+            Animated.timing(fadeAnimation, {
                 toValue: 1,
                 duration: 1000,
                 useNativeDriver: true
@@ -24,8 +24,10 @@ export default function Screen() {
         ]).start();
         const timer = setTimeout(() => {
             router.replace('/auth');
-        }, 2000)
-        return () => clearTimeout(timer);
+        }, 2000);
+        return function cleanup() {
+            clearTimeout(timer);
+        };
     }, []);
 
     return (
@@ -42,7 +44,7 @@ export default function Screen() {
                 </View>
             </Animated.View>
         </View>
-    )
+    );
 }
 
 const styles = StyleSheet.create({
@@ -67,4 +69,4 @@ const styles = StyleSheet.create({
         marginRight: 10,
         letterSpacing: 1,
     }
-})
+});
