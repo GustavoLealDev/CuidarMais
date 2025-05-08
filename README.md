@@ -36,7 +36,7 @@ Este comando moverá o código inicial para o diretório **app-example** e criar
 
 ## ⚙️ Git Clone :
 
-
+https://github.com/GustavoLealDev/CuidarMais.git
 
 ## Saiba mais 
 
