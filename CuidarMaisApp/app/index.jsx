@@ -1,3 +1,4 @@
+// Importação de componentes e bibliotecas necessárias
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { useRouter } from 'expo-router';
 import { useEffect, useRef } from 'react';
@@ -24,7 +25,7 @@ export default function Screen() {
         ]).start();
         const timer = setTimeout(() => {
             router.replace('/auth');
-        }, 2000);
+        }, 3000);
         return function cleanup() {
             clearTimeout(timer);
         };
@@ -47,6 +48,7 @@ export default function Screen() {
     );
 }
 
+// Estilos do componente
 const styles = StyleSheet.create({
     container: {
         flex: 1,

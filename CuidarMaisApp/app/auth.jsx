@@ -1,3 +1,4 @@
+// Importações de bibliotecas e componentes necessários
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import * as LocalAuthentication from "expo-local-authentication";
@@ -7,8 +8,11 @@ import { Dimensions, StyleSheet, Text, TouchableOpacity, View } from 'react-nati
 
 const { width } = Dimensions.get('window');
 
+// Componente principal da tela de autenticação
 export default function AuthScreen() {
+  // Verifica se dispositivo tem biometria
   const [hasBiometrics, setHasBiometrics] = useState(false);
+  // Estado durante autenticação
   const [isAuthentication, setIsAuthentication] = useState(false);
   const [error, setError] = useState(null);
   const router = useRouter();
@@ -17,21 +21,25 @@ export default function AuthScreen() {
     checkBiometrics();
   }, []);
 
+   // Função para verificar se o dispositivo suporta autenticação biométrica
   const checkBiometrics = async () => {
     const hasHardware = await LocalAuthentication.hasHardwareAsync();
     const isEnrolled = await LocalAuthentication.isEnrolledAsync();
     setHasBiometrics(hasHardware && isEnrolled);
   }
 
+   // Função para realizar a autenticação
   const authenticate = async () => {
     try {
       setIsAuthentication(true);
       setError(null);
 
+       // Verifica novamente as capacidades do dispositivo
       const hasHardware = await LocalAuthentication.hasHardwareAsync();
       const isEnrolled = await LocalAuthentication.isEnrolledAsync();
       const supportedTypes = await LocalAuthentication.supportedAuthenticationTypesAsync
 
+      // Inicia o processo de autenticação
       const auth = await LocalAuthentication.authenticateAsync({
         promptMessage : hasHardware && isEnrolled 
         ? "Use Face ID, Touch ID ou senha para acessar seus medicamentos" 
@@ -40,6 +48,8 @@ export default function AuthScreen() {
         cancelLabel: 'Voltar',
         disableDeviceFallback: false,
       });
+
+      // Se autenticação for bem sucedida, navega para homeScreen
       if(auth.success){
         router.replace('/home')
       } else {
@@ -98,6 +108,7 @@ export default function AuthScreen() {
   );
 }
 
+// Estilos do componente
 const styles = StyleSheet.create({
   container: {
     flex: 1,
