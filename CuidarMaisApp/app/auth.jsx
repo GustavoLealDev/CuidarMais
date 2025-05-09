@@ -1,5 +1,6 @@
 // Importações de bibliotecas e componentes necessários
 import { Ionicons } from '@expo/vector-icons';
+import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import { LinearGradient } from 'expo-linear-gradient';
 import * as LocalAuthentication from "expo-local-authentication";
 import { useRouter } from 'expo-router';
@@ -68,7 +69,7 @@ export default function AuthScreen() {
     >
       <View style={styles.content}>
         <View style={styles.iconContainer}>
-          <Ionicons name='medical' size={80} color="white" />
+          <FontAwesome5 name="pills" size={60} color="white" />
         </View>
 
         <Text style={styles.title}>Cuidar +</Text>
