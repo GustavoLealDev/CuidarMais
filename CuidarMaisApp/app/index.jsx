@@ -24,7 +24,7 @@ export default function Screen() {
             }),
         ]).start();
         const timer = setTimeout(() => {
-            router.replace('/auth');
+            router.replace('/home');
         }, 3000);
         return function cleanup() {
             clearTimeout(timer);
