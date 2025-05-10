@@ -1,4 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
+import Fontisto from '@expo/vector-icons/Fontisto';
 import { LinearGradient } from "expo-linear-gradient";
 import { Link, useRouter } from "expo-router";
 import { useEffect, useRef } from "react";
@@ -13,14 +14,21 @@ const QUICK_ACTIONS = [
         label: 'Nova\nMedicação',
         route: '/medications/add',
         color: '#98FF98',
-        gradient: ['#4CAF50', "#2E7D32"],
+        gradient: ['#6C63FF', "#4A42E6"],
     },
     {
         icon: 'calendar-outline',
         label: 'Calendário',
         route: '/calendar',
         color: '#98FF98',
-        gradient: ['#4CAF50', "#2E7D32"],
+        gradient: ['#FF7D7D', "#FF5252"],
+    },
+    {
+        icon: 'time-outline',
+        label: 'Historico',
+        route: '/history',
+        color: '#98FF98',
+        gradient: ['#4D96FF', "#3578E5"],
     },
 ];
 
@@ -49,8 +57,8 @@ function CircularProgress({ progress, totalDoses, completedDoses }) {
     return (
         <View style={styles.progressContainer}>
             <View style={styles.progressTextContainer}>
-                <Text styles={styles.progressPercentage}>{Math.round(progress)}%</Text>
-                <Text style={styles.progressLabel}>{completedDoses} de {totalDoses} Doses</Text>
+                <Text style={styles.progressPercentage}>{Math.round(progress * 100)}%</Text>
+                <Text style={styles.progressLabel}>{completedDoses} de {totalDoses} doses</Text>
             </View>
             <Svg width={size} height={size} style={styles.progressRing}>
                 <Circle
@@ -85,7 +93,7 @@ export default function HomeScreen() {
         <ScrollView showsVerticalScrollIndicator={false} style={styles.container}>
             <LinearGradient colors={["#243560", "#243560"]} style={styles.header}>
                 <View style={styles.headerContent}>
-                    <View style={styles.hearderTop}>
+                    <View style={styles.headerTop}>
                         <View style={{ flex: 1 }}>
                             <Text style={styles.greeting}>Progresso Diario</Text>
                         </View>
@@ -97,7 +105,7 @@ export default function HomeScreen() {
                         </TouchableOpacity>
                     </View>
                     <CircularProgress
-                        progress={50}
+                        progress={0.5}
                         totalDoses={10}
                         completedDoses={5}
                     />
@@ -115,9 +123,7 @@ export default function HomeScreen() {
                                             <View style={styles.actionIcon}>
                                                 <Ionicons name={action.icon} size={24} color={'white'} />
                                             </View>
-                                            <Text>
-                                                {action.label}
-                                            </Text>
+                                            <Text style={styles.actionLabel}> {action.label}</Text>
                                         </View>
                                     </LinearGradient>
                                 </TouchableOpacity>
@@ -125,6 +131,69 @@ export default function HomeScreen() {
                         ))}
                     </View>
                 </View>
+            </View>
+            <View style={{ paddingHorizontal: 20 }}>
+                <View style={styles.sectionHeader}>
+                    <Text style={styles.sectionTitle}>Programação diária</Text>
+                    <Link href='/calender' asChild>
+                        <TouchableOpacity>
+                            <Text style={styles.seeAllButton}>Ver tudo</Text>
+                        </TouchableOpacity>
+                    </Link>
+                </View>
+
+                {true ? (
+                    <View style={styles.emptyState}>
+                        <Fontisto name="pills" size={24} color="ccc" />
+                        <Text style={styles.emptyStateText}>Nenhum medicamento agendado</Text>
+                        <Link href='/medications/add' asChild>
+                            <TouchableOpacity style={styles.addMedicationButton}>
+                                <LinearGradient 
+                                    colors={['#6C63FF', '#4A42E6']} 
+                                    style={styles.addMedicationGradient}
+                                    start={{x: 0, y: 0}}
+                                    end={{x: 1, y: 0}}
+                                >
+                                    <Text style={styles.addMedicationButtonText}>Adicionar medicamento</Text>
+                                </LinearGradient>
+                            </TouchableOpacity>
+                        </Link>
+                    </View>
+                ) : (
+                    [].map((medications) => {
+                        return (
+                            <View style={styles.doseCard}>
+                                <View style={[
+                                    styles.doseBadge, {
+                                        backgroundColor: medications.color
+                                    }
+                                ]}>
+                                    <Ionicons name='medical' size={24} />
+                                </View>
+                                <View style={styles.doseInfo}>
+                                    <View>
+                                        <Text styl={styles.medicineName}>Nome</Text>
+                                        <Text style={styles.dosageInfo}>Dose</Text>
+                                    </View>
+                                    <View style={styles.doseTime}>
+                                        <Ionicons name='time-outline' size={24} color='ccc' />
+                                        <Text style={styles.timeText}>time</Text>
+                                    </View>
+                                </View>
+                                {true ? (
+                                    <View style={styles.takeDoseButton}>
+                                        <Ionicons name='checkmark-circle-outline' size={24} />
+                                        <Text style={styles.takeDoseText}>Tomar</Text>
+                                    </View>
+                                ) : (
+                                    <TouchableOpacity style={styles.takeDoseButton}>
+                                        <Text style={styles.takeDoseText}>Tomar</Text>
+                                    </TouchableOpacity>
+                                )}
+                            </View>
+                        );
+                    })
+                )}
             </View>
         </ScrollView>
     );
@@ -145,7 +214,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         paddingHorizontal: 20,
     },
-    hearderTop: {
+    headerTop: {
         flexDirection: 'row',
         alignItems: 'center',
         width: '100%',
@@ -215,18 +284,18 @@ const styles = StyleSheet.create({
     },
     progressRing: {
         transform: [{ rotate: '-90deg' }],
-    }, 
+    },
     quickActionsContainer: {
         paddingHorizontal: 20,
         marginBottom: 25
-    }, 
-    quickActionsGrid:{
+    },
+    quickActionsGrid: {
         flexDirection: 'row',
         flexWrap: 'wrap',
         gap: 10,
         marginTop: 15,
     },
-    actionButton:{
+    actionButton: {
         width: (width - 52) / 2,
         height: 110,
         borderRadius: 16,
@@ -243,8 +312,9 @@ const styles = StyleSheet.create({
         backgroundColor: 'rgba(255,255,255, 0.2)',
         justifyContent: 'center',
         alignItems: 'center',
+        borderRadius: 20,
     },
-    actionLabel:{
+    actionLabel: {
         fontSize: 14,
         color: 'white',
         fontWeight: '600',
@@ -256,8 +326,101 @@ const styles = StyleSheet.create({
         color: '#1a1a1a',
         marginBottom: 5,
     },
-    actionContent:{
-        flex: 1, 
+    actionContent: {
+        flex: 1,
         justifyContent: 'space-between'
+    },
+    sectionHeader: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginBottom: 10,
+    },
+    seeAllButton: {
+        color: '#6C63FF', // Alterado para o mesmo tom de azul
+        fontWeight: '600',
+    },
+    emptyState: {
+        alignItems: 'center',
+        padding: 30,
+        backgroundColor: 'white',
+        borderRadius: 16,
+        marginTop: 10,
+    },
+    emptyStateText: {
+        fontSize: 16,
+        color: '#666',
+        marginTop: 10,
+        marginBottom: 20,
+    },
+    addMedicationButton: {
+        width: '100%',
+        borderRadius: 20,
+        overflow: 'hidden',
+    },
+    addMedicationGradient: {
+        paddingHorizontal: 20,
+        paddingVertical: 12,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    addMedicationButtonText: {
+        color: 'white',
+        fontWeight: '600'
+    },
+    doseCard: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: 'white',
+        borderRadius: 16,
+        padding: 16,
+        marginBottom: 12,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.05,
+        shadowRadius: 8,
+        elevation: 3,
+    },
+    doseBadge: {
+        width: 50,
+        height: 50,
+        borderRadius: 25,
+        justifyContent: 'center',
+        marginRight: 15,
+    },
+    doseInfo: {
+        flex: 1,
+        justifyContent: 'space-between',
+    },
+    medicineName: {
+        fontSize: 16,
+        fontWeight: '600',
+        color: '#333',
+        marginBottom: 4,
+    },
+    dosageInfo: {
+        fontSize: 14,
+        color: '#666',
+        marginBottom: 4,
+    },
+    doseTime: {
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+    timeText: {
+        marginLeft: 5,
+        color: '#666',
+        fontSize: 14,
+    },
+    takeDoseButton: {
+        paddingVertical: 8,
+        paddingHorizontal: 15,
+        borderRadius: 15,
+        marginLeft: 10,
+    },
+    takeDoseText: {
+        color: 'white',
+        fontWeight: '600',
+        fontSize: 14,
     }
 });
