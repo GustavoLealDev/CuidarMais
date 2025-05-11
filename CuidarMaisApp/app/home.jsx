@@ -1,3 +1,4 @@
+// Importação de componentes e bibliotecas necessárias
 import { Ionicons } from "@expo/vector-icons";
 import Fontisto from '@expo/vector-icons/Fontisto';
 import { LinearGradient } from "expo-linear-gradient";
@@ -39,6 +40,7 @@ function CircularProgress({ progress, totalDoses, completedDoses }) {
     const radius = (size - strokeWidth) / 2;
     const circumference = 2 * Math.PI * radius;
 
+    // Anima a mudança de progresso
     useEffect(() => {
         Animated.timing(animationValue, {
             toValue: progress,
@@ -52,6 +54,7 @@ function CircularProgress({ progress, totalDoses, completedDoses }) {
         outputRange: [circumference, 0],
     });
 
+    // Cria um componente de círculo animado
     const AnimatedCircle = Animated.createAnimatedComponent(Circle);
 
     return (
@@ -87,6 +90,8 @@ function CircularProgress({ progress, totalDoses, completedDoses }) {
     );
 }
 
+
+// Componente principal da tela inicial
 export default function HomeScreen() {
     const router = useRouter();
     return (
@@ -223,6 +228,7 @@ export default function HomeScreen() {
     );
 }
 
+// Estilos do componente
 const styles = StyleSheet.create({
     container: {
         flex: 1,
