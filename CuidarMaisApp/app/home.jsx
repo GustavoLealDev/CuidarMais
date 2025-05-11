@@ -3,7 +3,7 @@ import Fontisto from '@expo/vector-icons/Fontisto';
 import { LinearGradient } from "expo-linear-gradient";
 import { Link, useRouter } from "expo-router";
 import { useEffect, useRef } from "react";
-import { Animated, Dimensions, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Animated, Dimensions, Modal, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import Svg, { Circle } from 'react-native-svg';
 
 const { width } = Dimensions.get('window');
@@ -148,11 +148,11 @@ export default function HomeScreen() {
                         <Text style={styles.emptyStateText}>Nenhum medicamento agendado</Text>
                         <Link href='/medications/add' asChild>
                             <TouchableOpacity style={styles.addMedicationButton}>
-                                <LinearGradient 
-                                    colors={['#6C63FF', '#4A42E6']} 
+                                <LinearGradient
+                                    colors={['#6C63FF', '#4A42E6']}
                                     style={styles.addMedicationGradient}
-                                    start={{x: 0, y: 0}}
-                                    end={{x: 1, y: 0}}
+                                    start={{ x: 0, y: 0 }}
+                                    end={{ x: 1, y: 0 }}
                                 >
                                     <Text style={styles.addMedicationButtonText}>Adicionar medicamento</Text>
                                 </LinearGradient>
@@ -195,6 +195,30 @@ export default function HomeScreen() {
                     })
                 )}
             </View>
+            <Modal visible={true} transparent={true} animationType='slide'>
+                <View style={styles.modalOverlay}>
+                    <View style={styles.modalContent}>
+                        <Text style={styles.modalTitle}>
+                            Notificação
+                        </Text>
+                        <TouchableOpacity style={styles.closeButton}>
+                            <Ionicons name='close' size={24} color='#ccc' />
+                        </TouchableOpacity>
+                    </View>
+                    {[].map((medications) => (
+                        <View style={styles.notificationItem}>
+                            <View style={styles.notificationIcon}>
+                                <Ionicons name='medical' size={24} />
+                            </View>
+                            <View style={styles.notificationContent}>
+                                <Text style={styles.notificationTitle}>Nome da medicação</Text>
+                                <Text style={styles.notificationMessage}>Dosagem da medicação</Text>
+                                <Text style={styles.notificationTime}>Horario da medicação</Text>
+                            </View>
+                        </View>
+                    ))}
+                </View>
+            </Modal>
         </ScrollView>
     );
 }
@@ -422,5 +446,65 @@ const styles = StyleSheet.create({
         color: 'white',
         fontWeight: '600',
         fontSize: 14,
+    },
+    modalOverlay:{
+        flex: 1,
+        backgroundColor: 'rgba(0,0,0,0.5)',
+        justifyContent: 'flex-end'
+    },
+    modalContent:{
+        backgroundColor: 'white',
+        borderTopLeftRadius: 20,
+        borderTopRightRadius: 20,
+        padding: 20,
+        maxHeight: '80%',
+    },
+    modalHeader: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginBottom: 20,
+    },
+    modalTitle: {
+        fontSize: 20,
+        fontWeight: 'bold',
+        color: '#333'
+    },
+    closeButton: {
+        padding: 5,
+    },
+    notificationContent:{
+        flex: 1,
+    },
+    notificationItem: {
+        flexDirection: 'row',
+        padding: 15,
+        borderRadius: 12,
+        backgroundColor: '#f5f5f5',
+        marginBottom: 10,
+    }, 
+    notificationTitle: {
+        fontSize: 16,
+        fontWeight: '600',
+        color: '#333',
+        marginBottom: 4,
+    },
+    notificationMessage: {
+        fontSize: 14,
+        color: '#666',
+        marginBottom: 4,
+    },
+    notificationIcon:{
+        width: 40,
+        height: 40,
+        borderRadius: 20,
+        backgroundColor: '#E8F5E9',
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginRight: 15,
+    },
+    notificationTime:{
+        fontSize: 12,
+        color: '#999',
     }
 });
