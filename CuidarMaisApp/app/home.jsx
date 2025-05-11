@@ -12,7 +12,7 @@ const QUICK_ACTIONS = [
     {
         icon: 'add-circle-outline',
         label: 'Nova\nMedicação',
-        route: '/medications/add',
+        route: '/medicacoes/add',
         color: '#98FF98',
         gradient: ['#6C63FF', "#4A42E6"],
     },
@@ -146,7 +146,7 @@ export default function HomeScreen() {
                     <View style={styles.emptyState}>
                         <Fontisto name="pills" size={24} color="ccc" />
                         <Text style={styles.emptyStateText}>Nenhum medicamento agendado</Text>
-                        <Link href='/medications/add' asChild>
+                        <Link href='/medicacoes/add' asChild>
                             <TouchableOpacity style={styles.addMedicationButton}>
                                 <LinearGradient
                                     colors={['#6C63FF', '#4A42E6']}
@@ -195,7 +195,7 @@ export default function HomeScreen() {
                     })
                 )}
             </View>
-            <Modal visible={true} transparent={true} animationType='slide'>
+            <Modal visible={false} transparent={true} animationType='slide'>
                 <View style={styles.modalOverlay}>
                     <View style={styles.modalContent}>
                         <Text style={styles.modalTitle}>
