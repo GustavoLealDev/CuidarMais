@@ -3,7 +3,7 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import { useState } from "react";
-import { Dimensions, Platform, ScrollView, StyleSheet, Switch, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { Alert, Dimensions, Platform, ScrollView, StyleSheet, Switch, Text, TextInput, TouchableOpacity, View } from "react-native";
 
 const { width } = Dimensions.get('window');
 
@@ -90,7 +90,7 @@ export default function AddMedicacaoScreen() {
         return (
             <View style={styles.optionsGrid}>
                 {FREQUENCIA.map((freq) => (
-                    <TouchableOpacity 
+                    <TouchableOpacity
                         style={[
                             styles.optionCard,
                             selectedFrequency === freq.label && styles.selectedOptionCard
@@ -98,17 +98,17 @@ export default function AddMedicacaoScreen() {
                         key={freq.id}
                         onPress={() => {
                             setSelectedFrequency(freq.label);
-                            setForm({...form, frequency: freq.label, times: freq.times});
+                            setForm({ ...form, frequency: freq.label, times: freq.times });
                         }}
                     >
                         <View style={[
                             styles.optionIcon,
                             selectedFrequency === freq.label && styles.selectedOptionIcon,
                         ]}>
-                            <Ionicons 
+                            <Ionicons
                                 name={freq.icon}
                                 size={24}
-                                color={selectedFrequency === freq.label ? COLORS.white : COLORS.primary} 
+                                color={selectedFrequency === freq.label ? COLORS.white : COLORS.primary}
                             />
                         </View>
                         <Text style={[
@@ -135,7 +135,7 @@ export default function AddMedicacaoScreen() {
                         key={dur.id}
                         onPress={() => {
                             setSelectedDuration(dur.label);
-                            setForm({...form, duration: dur.value});
+                            setForm({ ...form, duration: dur.value });
                         }}
                     >
                         <Text style={[
@@ -156,6 +156,73 @@ export default function AddMedicacaoScreen() {
         );
     };
 
+    const validate = () => {
+        const newErrors = {};
+
+        if (!form.name.trim()) {
+            newErrors.name = "Digite o nome do medicamento";
+        }
+        if (!form.dosage.trim()) {
+            newErrors.dosage = "Digite a Dosagem necessária";
+        }
+        if (!form.frequency.trim()) {
+            newErrors.frequency = "Digite a Frequência";
+        }
+        if (!form.duration.trim()) {
+            newErrors.duration = "Digite a duração";
+        }
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
+    };
+
+    const handle = async () => {
+        try {
+            if (!validate()) {
+                alert.alert("Error", "Por favor prencha todos os campos!!")
+                return;
+            }
+            if (isSubmitting) return;
+            setIsSubmitting(true);
+
+            const colors = ['#4CAF50', '#2196F3', '#FF9800', '#E91E63']
+            const randomColor = colors[Math.floor(Math.random() * colors.length)];
+
+            const medicationData = {
+                id: Math.random().toString(36).substr(2, 9),
+                ...form,
+                currentSupply: form.currentSupply ? Number(form.currentSupply) : 0,
+                totalSupply: form.currentSupply ? Number(form.currentSupply) : 0,
+                refillAt: form.refillAt ? Number(form.refillAt) : 0,
+                startDate: form.startDate.toISOString(),
+                color: randomColor,
+            };
+
+            await addMedication(medicationData);
+            if (medicationData.reminderEnabled) {
+                await scheduleMedicationReminder(medicationData);
+            }
+
+            Alert.alert("Adicionado!", 'Medicação adicionada com sucesso!', [
+                {
+                    text: 'Ok',
+                    onPress: () => router.back(),
+                },
+            ],
+                { cancelable: false }
+            );
+
+        } catch (error) {
+            console.error('Error ao salvar', error);
+            Alert.alert('Error', 'Falha ao salvar medicação. Tente novamente!',
+                [{ text: 'OK' }],
+                { cancelable: false }
+
+            );
+        } finally {
+            setIsSubmitting(false);
+        }
+    }
+
     return (
         <View style={styles.container}>
             <LinearGradient
@@ -164,10 +231,10 @@ export default function AddMedicacaoScreen() {
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 1 }}
             />
-            
+
             <View style={styles.content}>
                 <View style={styles.header}>
-                    <TouchableOpacity 
+                    <TouchableOpacity
                         style={styles.backButton}
                         onPress={() => router.back()}
                     >
@@ -175,10 +242,10 @@ export default function AddMedicacaoScreen() {
                     </TouchableOpacity>
                     <Text style={styles.headerTitle}>Nova Medicação</Text>
                 </View>
-                
-                <ScrollView 
-                    showsVerticalScrollIndicator={false} 
-                    style={{ flex: 1 }} 
+
+                <ScrollView
+                    showsVerticalScrollIndicator={false}
+                    style={{ flex: 1 }}
                     contentContainerStyle={styles.contentContainer}
                 >
                     <View style={styles.section}>
@@ -199,7 +266,7 @@ export default function AddMedicacaoScreen() {
                                 <Text style={styles.errorText}>{errors.name}</Text>
                             )}
                         </View>
-                        
+
                         <View style={styles.inputContainer}>
                             <TextInput
                                 style={[styles.mainInput, errors.dosage && styles.inputError]}
@@ -237,8 +304,8 @@ export default function AddMedicacaoScreen() {
 
                     <View style={styles.section}>
                         <Text style={styles.sectionTitle}>Data de início</Text>
-                        <TouchableOpacity 
-                            style={styles.dateButton} 
+                        <TouchableOpacity
+                            style={styles.dateButton}
                             onPress={() => setShowDatePicker(true)}
                         >
                             <View style={styles.dateIconContainer}>
@@ -249,18 +316,18 @@ export default function AddMedicacaoScreen() {
                             </Text>
                             <Ionicons name='chevron-forward' size={20} color={COLORS.gray} />
                         </TouchableOpacity>
-                        
+
                         {showDatePicker && (
-                            <DateTimePicker 
-                                value={form.startDate} 
-                                mode="date" 
+                            <DateTimePicker
+                                value={form.startDate}
+                                mode="date"
                                 display="spinner"
                                 textColor={COLORS.dark}
                                 themeVariant="light"
                                 onChange={(event, date) => {
                                     setShowDatePicker(false);
                                     if (date) setForm({ ...form, startDate: date });
-                                }} 
+                                }}
                             />
                         )}
                     </View>
@@ -281,9 +348,9 @@ export default function AddMedicacaoScreen() {
                                     <Ionicons name="chevron-forward" size={20} color={COLORS.gray} />
                                 </TouchableOpacity>
                             ))}
-                            
+
                             {showTimePicker && (
-                                <DateTimePicker 
+                                <DateTimePicker
                                     mode="time"
                                     value={(() => {
                                         const [hours, minutes] = form.times[0].split(':').map(Number);
@@ -318,10 +385,10 @@ export default function AddMedicacaoScreen() {
                         <View style={styles.card}>
                             <View style={styles.switchRow}>
                                 <View style={styles.switchLabelContainer}>
-                                    <View style={[styles.iconContainer, {backgroundColor: COLORS.primary + '20'}]}>
+                                    <View style={[styles.iconContainer, { backgroundColor: COLORS.primary + '20' }]}>
                                         <Ionicons name='notifications-outline' size={20} color={COLORS.primary} />
                                     </View>
-                                    <View style={{flex: 1}}>
+                                    <View style={{ flex: 1 }}>
                                         <Text style={styles.switchLabel}>Ativar lembretes</Text>
                                         <Text style={styles.switchSubLabel}>
                                             Receber notificações nos horários programados
@@ -355,9 +422,9 @@ export default function AddMedicacaoScreen() {
                         </View>
                     </View>
                 </ScrollView>
-                
+
                 <View style={styles.footer}>
-                    <TouchableOpacity 
+                    <TouchableOpacity
                         style={[
                             styles.saveButton,
                             isSubmitting && styles.saveButtonDisabled,
@@ -375,7 +442,7 @@ export default function AddMedicacaoScreen() {
                             </Text>
                         </LinearGradient>
                     </TouchableOpacity>
-                    
+
                     <TouchableOpacity
                         style={styles.cancelButton}
                         onPress={() => router.back()}
