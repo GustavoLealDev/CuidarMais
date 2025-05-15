@@ -52,7 +52,7 @@ export default function Screen() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#243560',
+        backgroundColor: '#4361EE',
         alignItems: 'center',
         justifyContent: 'center'
     },

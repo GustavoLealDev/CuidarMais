@@ -9,27 +9,39 @@ import Svg, { Circle } from 'react-native-svg';
 
 const { width } = Dimensions.get('window');
 
+// Cores principais do tema
+const COLORS = {
+  primary: '#4361EE',
+  secondary: '#3A0CA3',
+  accent: '#4CC9F0',
+  success: '#4ADE80',
+  warning: '#FBBF24',
+  danger: '#F87171',
+  background: '#F8FAFC',
+  text: '#1E293B',
+  textLight: '#64748B',
+  white: '#FFFFFF',
+  card: '#FFFFFF',
+};
+
 const QUICK_ACTIONS = [
     {
         icon: 'add-circle-outline',
         label: 'Nova\nMedicação',
         route: '/medicacoes/add',
-        color: '#98FF98',
-        gradient: ['#6C63FF', "#4A42E6"],
+        gradient: [COLORS.primary, COLORS.secondary],
     },
     {
         icon: 'calendar-outline',
         label: 'Calendário',
         route: '/calendar',
-        color: '#98FF98',
-        gradient: ['#FF7D7D', "#FF5252"],
+        gradient: [COLORS.accent, '#3A86FF'],
     },
     {
         icon: 'time-outline',
         label: 'Historico',
         route: '/history',
-        color: '#98FF98',
-        gradient: ['#4D96FF', "#3578E5"],
+        gradient: [COLORS.success, '#10B981'],
     },
 ];
 
@@ -40,7 +52,6 @@ function CircularProgress({ progress, totalDoses, completedDoses }) {
     const radius = (size - strokeWidth) / 2;
     const circumference = 2 * Math.PI * radius;
 
-    // Anima a mudança de progresso
     useEffect(() => {
         Animated.timing(animationValue, {
             toValue: progress,
@@ -54,7 +65,6 @@ function CircularProgress({ progress, totalDoses, completedDoses }) {
         outputRange: [circumference, 0],
     });
 
-    // Cria um componente de círculo animado
     const AnimatedCircle = Animated.createAnimatedComponent(Circle);
 
     return (
@@ -76,7 +86,7 @@ function CircularProgress({ progress, totalDoses, completedDoses }) {
                     cx={size / 2}
                     cy={size / 2}
                     r={radius}
-                    stroke="white"
+                    stroke={COLORS.white}
                     strokeWidth={strokeWidth}
                     fill="none"
                     strokeDasharray={circumference}
@@ -90,20 +100,18 @@ function CircularProgress({ progress, totalDoses, completedDoses }) {
     );
 }
 
-
-// Componente principal da tela inicial
 export default function HomeScreen() {
     const router = useRouter();
     return (
         <ScrollView showsVerticalScrollIndicator={false} style={styles.container}>
-            <LinearGradient colors={["#243560", "#243560"]} style={styles.header}>
+            <LinearGradient colors={[COLORS.primary, COLORS.secondary]} style={styles.header}>
                 <View style={styles.headerContent}>
                     <View style={styles.headerTop}>
                         <View style={{ flex: 1 }}>
                             <Text style={styles.greeting}>Progresso Diario</Text>
                         </View>
                         <TouchableOpacity style={styles.notificationButton}>
-                            <Ionicons name='notifications-outline' size={24} color="white" />
+                            <Ionicons name='notifications-outline' size={24} color={COLORS.white} />
                             {<View style={styles.notificationBadge}>
                                 <Text style={styles.notificationCount}></Text>
                             </View>}
@@ -118,15 +126,20 @@ export default function HomeScreen() {
             </LinearGradient>
             <View style={styles.content}>
                 <View style={styles.quickActionsContainer}>
-                    <Text style={styles.sectionTitle}>Ações</Text>
+                    <Text style={styles.sectionTitle}>Ações Rápidas</Text>
                     <View style={styles.quickActionsGrid}>
                         {QUICK_ACTIONS.map((action) => (
                             <Link href={action.route} key={action.label} asChild>
                                 <TouchableOpacity style={styles.actionButton}>
-                                    <LinearGradient colors={action.gradient} style={styles.actionGradient}>
+                                    <LinearGradient 
+                                        colors={action.gradient} 
+                                        style={styles.actionGradient}
+                                        start={{ x: 0, y: 0 }}
+                                        end={{ x: 1, y: 1 }}
+                                    >
                                         <View style={styles.actionContent}>
                                             <View style={styles.actionIcon}>
-                                                <Ionicons name={action.icon} size={24} color={'white'} />
+                                                <Ionicons name={action.icon} size={24} color={COLORS.white} />
                                             </View>
                                             <Text style={styles.actionLabel}> {action.label}</Text>
                                         </View>
@@ -149,12 +162,12 @@ export default function HomeScreen() {
 
                 {true ? (
                     <View style={styles.emptyState}>
-                        <Fontisto name="pills" size={24} color="ccc" />
+                        <Fontisto name="pills" size={24} color={COLORS.textLight} />
                         <Text style={styles.emptyStateText}>Nenhum medicamento agendado</Text>
                         <Link href='/medicacoes/add' asChild>
                             <TouchableOpacity style={styles.addMedicationButton}>
                                 <LinearGradient
-                                    colors={['#6C63FF', '#4A42E6']}
+                                    colors={[COLORS.primary, COLORS.secondary]}
                                     style={styles.addMedicationGradient}
                                     start={{ x: 0, y: 0 }}
                                     end={{ x: 1, y: 0 }}
@@ -173,25 +186,25 @@ export default function HomeScreen() {
                                         backgroundColor: medications.color
                                     }
                                 ]}>
-                                    <Ionicons name='medical' size={24} />
+                                    <Ionicons name='medical' size={24} color={COLORS.white} />
                                 </View>
                                 <View style={styles.doseInfo}>
                                     <View>
-                                        <Text styl={styles.medicineName}>Nome</Text>
+                                        <Text style={styles.medicineName}>Nome</Text>
                                         <Text style={styles.dosageInfo}>Dose</Text>
                                     </View>
                                     <View style={styles.doseTime}>
-                                        <Ionicons name='time-outline' size={24} color='ccc' />
+                                        <Ionicons name='time-outline' size={16} color={COLORS.textLight} />
                                         <Text style={styles.timeText}>time</Text>
                                     </View>
                                 </View>
                                 {true ? (
-                                    <View style={styles.takeDoseButton}>
-                                        <Ionicons name='checkmark-circle-outline' size={24} />
-                                        <Text style={styles.takeDoseText}>Tomar</Text>
+                                    <View style={[styles.takeDoseButton, { backgroundColor: COLORS.success }]}>
+                                        <Ionicons name='checkmark-circle-outline' size={16} color={COLORS.white} />
+                                        <Text style={styles.takeDoseText}>Tomado</Text>
                                     </View>
                                 ) : (
-                                    <TouchableOpacity style={styles.takeDoseButton}>
+                                    <TouchableOpacity style={[styles.takeDoseButton, { backgroundColor: COLORS.primary }]}>
                                         <Text style={styles.takeDoseText}>Tomar</Text>
                                     </TouchableOpacity>
                                 )}
@@ -204,16 +217,16 @@ export default function HomeScreen() {
                 <View style={styles.modalOverlay}>
                     <View style={styles.modalContent}>
                         <Text style={styles.modalTitle}>
-                            Notificação
+                            Notificações
                         </Text>
                         <TouchableOpacity style={styles.closeButton}>
-                            <Ionicons name='close' size={24} color='#ccc' />
+                            <Ionicons name='close' size={24} color={COLORS.textLight} />
                         </TouchableOpacity>
                     </View>
                     {[].map((medications) => (
                         <View style={styles.notificationItem}>
                             <View style={styles.notificationIcon}>
-                                <Ionicons name='medical' size={24} />
+                                <Ionicons name='medical' size={24} color={COLORS.primary} />
                             </View>
                             <View style={styles.notificationContent}>
                                 <Text style={styles.notificationTitle}>Nome da medicação</Text>
@@ -228,17 +241,21 @@ export default function HomeScreen() {
     );
 }
 
-// Estilos do componente
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: 'white',
+        backgroundColor: COLORS.background,
     },
     header: {
         padding: 50,
         paddingBottom: 25,
         borderBottomLeftRadius: 30,
         borderBottomRightRadius: 30,
+        shadowColor: COLORS.secondary,
+        shadowOffset: { width: 0, height: 10 },
+        shadowOpacity: 0.2,
+        shadowRadius: 20,
+        elevation: 10,
     },
     headerContent: {
         alignItems: 'center',
@@ -253,12 +270,13 @@ const styles = StyleSheet.create({
     greeting: {
         fontSize: 18,
         fontWeight: '600',
-        color: 'white',
+        color: COLORS.white,
         opacity: 0.9,
     },
     content: {
         flex: 1,
         paddingTop: 20,
+        backgroundColor: COLORS.background,
     },
     notificationButton: {
         position: 'relative',
@@ -271,24 +289,22 @@ const styles = StyleSheet.create({
         position: 'absolute',
         top: -4,
         right: -4,
-        backgroundColor: '#ff5252',
+        backgroundColor: COLORS.danger,
         borderRadius: 10,
         height: 20,
         justifyContent: 'center',
         alignItems: 'center',
         paddingHorizontal: 4,
-        borderWidth: 2,
         minWidth: 20,
-        borderColor: '#146922',
     },
     notificationCount: {
         fontSize: 11,
         fontWeight: 'bold',
-        color: 'white'
+        color: COLORS.white
     },
     progressDetails: {
         fontSize: 11,
-        color: 'white',
+        color: COLORS.white,
         fontWeight: 'bold',
     },
     progressTextContainer: {
@@ -304,7 +320,7 @@ const styles = StyleSheet.create({
     },
     progressPercentage: {
         fontSize: 36,
-        color: 'white',
+        color: COLORS.white,
         fontWeight: 'bold',
     },
     progressLabel: {
@@ -330,10 +346,16 @@ const styles = StyleSheet.create({
         height: 110,
         borderRadius: 16,
         overflow: 'hidden',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.1,
+        shadowRadius: 6,
+        elevation: 3,
     },
     actionGradient: {
         flex: 1,
         padding: 15,
+        justifyContent: 'space-between',
     },
     actionIcon: {
         width: 40,
@@ -346,14 +368,14 @@ const styles = StyleSheet.create({
     },
     actionLabel: {
         fontSize: 14,
-        color: 'white',
+        color: COLORS.white,
         fontWeight: '600',
-        marginTop: 8,
+        lineHeight: 18,
     },
     sectionTitle: {
         fontSize: 20,
         fontWeight: '700',
-        color: '#1a1a1a',
+        color: COLORS.text,
         marginBottom: 5,
     },
     actionContent: {
@@ -367,19 +389,24 @@ const styles = StyleSheet.create({
         marginBottom: 10,
     },
     seeAllButton: {
-        color: '#6C63FF', // Alterado para o mesmo tom de azul
+        color: COLORS.primary,
         fontWeight: '600',
     },
     emptyState: {
         alignItems: 'center',
         padding: 30,
-        backgroundColor: 'white',
+        backgroundColor: COLORS.card,
         borderRadius: 16,
         marginTop: 10,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.05,
+        shadowRadius: 8,
+        elevation: 2,
     },
     emptyStateText: {
         fontSize: 16,
-        color: '#666',
+        color: COLORS.textLight,
         marginTop: 10,
         marginBottom: 20,
     },
@@ -387,6 +414,11 @@ const styles = StyleSheet.create({
         width: '100%',
         borderRadius: 20,
         overflow: 'hidden',
+        shadowColor: COLORS.primary,
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.2,
+        shadowRadius: 8,
+        elevation: 5,
     },
     addMedicationGradient: {
         paddingHorizontal: 20,
@@ -395,13 +427,13 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     addMedicationButtonText: {
-        color: 'white',
+        color: COLORS.white,
         fontWeight: '600'
     },
     doseCard: {
         flexDirection: 'row',
         alignItems: 'center',
-        backgroundColor: 'white',
+        backgroundColor: COLORS.card,
         borderRadius: 16,
         padding: 16,
         marginBottom: 12,
@@ -416,7 +448,9 @@ const styles = StyleSheet.create({
         height: 50,
         borderRadius: 25,
         justifyContent: 'center',
+        alignItems: 'center',
         marginRight: 15,
+        backgroundColor: COLORS.primary,
     },
     doseInfo: {
         flex: 1,
@@ -425,12 +459,12 @@ const styles = StyleSheet.create({
     medicineName: {
         fontSize: 16,
         fontWeight: '600',
-        color: '#333',
+        color: COLORS.text,
         marginBottom: 4,
     },
     dosageInfo: {
         fontSize: 14,
-        color: '#666',
+        color: COLORS.textLight,
         marginBottom: 4,
     },
     doseTime: {
@@ -439,7 +473,7 @@ const styles = StyleSheet.create({
     },
     timeText: {
         marginLeft: 5,
-        color: '#666',
+        color: COLORS.textLight,
         fontSize: 14,
     },
     takeDoseButton: {
@@ -447,19 +481,23 @@ const styles = StyleSheet.create({
         paddingHorizontal: 15,
         borderRadius: 15,
         marginLeft: 10,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
     },
     takeDoseText: {
-        color: 'white',
+        color: COLORS.white,
         fontWeight: '600',
         fontSize: 14,
+        marginLeft: 5,
     },
-    modalOverlay:{
+    modalOverlay: {
         flex: 1,
         backgroundColor: 'rgba(0,0,0,0.5)',
         justifyContent: 'flex-end'
     },
-    modalContent:{
-        backgroundColor: 'white',
+    modalContent: {
+        backgroundColor: COLORS.card,
         borderTopLeftRadius: 20,
         borderTopRightRadius: 20,
         padding: 20,
@@ -474,43 +512,44 @@ const styles = StyleSheet.create({
     modalTitle: {
         fontSize: 20,
         fontWeight: 'bold',
-        color: '#333'
+        color: COLORS.text
     },
     closeButton: {
         padding: 5,
     },
-    notificationContent:{
+    notificationContent: {
         flex: 1,
     },
     notificationItem: {
         flexDirection: 'row',
         padding: 15,
         borderRadius: 12,
-        backgroundColor: '#f5f5f5',
+        backgroundColor: COLORS.background,
         marginBottom: 10,
+        alignItems: 'center',
     }, 
     notificationTitle: {
         fontSize: 16,
         fontWeight: '600',
-        color: '#333',
+        color: COLORS.text,
         marginBottom: 4,
     },
     notificationMessage: {
         fontSize: 14,
-        color: '#666',
+        color: COLORS.textLight,
         marginBottom: 4,
     },
-    notificationIcon:{
+    notificationIcon: {
         width: 40,
         height: 40,
         borderRadius: 20,
-        backgroundColor: '#E8F5E9',
+        backgroundColor: '#E0E7FF',
         justifyContent: 'center',
         alignItems: 'center',
         marginRight: 15,
     },
-    notificationTime:{
+    notificationTime: {
         fontSize: 12,
-        color: '#999',
+        color: COLORS.textLight,
     }
 });
