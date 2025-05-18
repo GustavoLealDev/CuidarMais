@@ -79,7 +79,7 @@ export async function scheduleMedication(medication: Medication): Promise<string
     }
 }
 
-export async function cancelMedicationReminders(medicationId: string): Promise<void> {
+export async function cancelMedication(medicationId: string): Promise<void> {
     try {
         const scheduledNotifications = 
             await Notifications.getAllScheduledNotificationsAsync();
@@ -97,6 +97,17 @@ export async function cancelMedicationReminders(medicationId: string): Promise<v
         }
     } catch (error) {
         console.error("Erro ao cancelar lembretes de medicamentos:", error);
+        throw error;
+    }
+}
+
+export async function updateMedicationReminders(medication: Medication): Promise<void> {
+    try {
+        await cancelMedication(medication.id);
+
+        await scheduleMedication(medication);
+    } catch (error) {
+        console.error("Erro ao atualizar lembretes de medicamentos:", error);
         throw error;
     }
 }
