@@ -34,7 +34,7 @@ export async function registerNotificationsAsync(): Promise<string | null> {
                 name: 'default',
                 importance: Notifications.AndroidImportance.MAX,
                 vibrationPattern: [0, 250, 250, 250],
-                lightColor: '4361EE',
+                lightColor: '#4361EE',
             });
         }
 
@@ -101,7 +101,7 @@ export async function cancelMedication(medicationId: string): Promise<void> {
     }
 }
 
-export async function updateMedicationReminders(medication: Medication): Promise<void> {
+export async function updateMedication(medication: Medication): Promise<void> {
     try {
         await cancelMedication(medication.id);
 

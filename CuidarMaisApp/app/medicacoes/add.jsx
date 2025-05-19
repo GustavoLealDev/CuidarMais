@@ -49,8 +49,8 @@ const DURACAO = [
 ];
 
 const COLORS = {
-    primary: '#243560',
-    secondary: 'black',
+    primary: '#4361EE',
+    secondary: '#4361EE',
     accent: '#4895ef',
     light: '#f8f9fa',
     dark: '#212529',
