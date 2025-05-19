@@ -7,6 +7,7 @@ import { Alert, Dimensions, Platform, ScrollView, StyleSheet, Switch, Text, Text
 
 const { width } = Dimensions.get('window');
 
+// Opções pré-definidas de frequência de medicação
 const FREQUENCIA = [
     {
         id: '1',
@@ -40,6 +41,7 @@ const FREQUENCIA = [
     },
 ];
 
+// Opções pré-definidas de duração do tratamento
 const DURACAO = [
     { id: '1', label: '7 dias', value: 7 },
     { id: '2', label: '14 dias', value: 14 },
@@ -48,6 +50,7 @@ const DURACAO = [
     { id: '5', label: 'Contínuo', value: -1 },
 ];
 
+//Opções pré-definidas de cores do aplicativo
 const COLORS = {
     primary: '#4361EE',
     secondary: '#4361EE',
@@ -63,6 +66,8 @@ const COLORS = {
     lightGray: '#e9ecef',
 };
 
+
+// Tela para adicionar uma nova medicação
 export default function AddMedicacaoScreen() {
     const router = useRouter();
     const [errors, setErrors] = useState({});
@@ -72,6 +77,7 @@ export default function AddMedicacaoScreen() {
     const [showTimePicker, setShowTimePicker] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
 
+    //Formulário com todos os campos
     const [form, setForm] = useState({
         name: '',
         dosage: '',
@@ -86,6 +92,7 @@ export default function AddMedicacaoScreen() {
         notes: '',
     });
 
+    //Componente que renderiza as opções de frequência
     const FrequencyOptions = () => {
         return (
             <View style={styles.optionsGrid}>
@@ -123,6 +130,7 @@ export default function AddMedicacaoScreen() {
         );
     };
 
+    //Componente que renderiza as opções de duração
     const DurationOptions = () => {
         return (
             <View style={styles.optionsGrid}>
@@ -156,6 +164,7 @@ export default function AddMedicacaoScreen() {
         );
     };
 
+    //Valida os campos do formulário
     const validate = () => {
         const newErrors = {};
 
@@ -175,6 +184,7 @@ export default function AddMedicacaoScreen() {
         return Object.keys(newErrors).length === 0;
     };
 
+    //Manipula o envio do formulário, valida os dados, prepara os dados da medicação e salva
     const handle = async () => {
         try {
             if (!validate()) {
@@ -184,9 +194,11 @@ export default function AddMedicacaoScreen() {
             if (isSubmitting) return;
             setIsSubmitting(true);
 
+            // Gera uma cor aleatória para o medicamento
             const colors = ['#4CAF50', '#2196F3', '#FF9800', '#E91E63']
             const randomColor = colors[Math.floor(Math.random() * colors.length)];
 
+            // Prepara os dados para salvar
             const medicationData = {
                 id: Math.random().toString(36).substr(2, 9),
                 ...form,
@@ -198,6 +210,7 @@ export default function AddMedicacaoScreen() {
             };
 
             await addMedication(medicationData);
+             // Agenda lembretes se estiverem ativados
             if (medicationData.reminderEnabled) {
                 await scheduleMedicationReminder(medicationData);
             }
@@ -454,6 +467,7 @@ export default function AddMedicacaoScreen() {
     );
 }
 
+// Estilos da tela
 const styles = StyleSheet.create({
     container: {
         flex: 1,
