@@ -201,7 +201,6 @@ export default function AddMedicacaoScreen() {
             if (medicationData.reminderEnabled) {
                 await scheduleMedicationReminder(medicationData);
             }
-
             Alert.alert("Adicionado!", 'Medicação adicionada com sucesso!', [
                 {
                     text: 'Ok',
@@ -210,7 +209,6 @@ export default function AddMedicacaoScreen() {
             ],
                 { cancelable: false }
             );
-
         } catch (error) {
             console.error('Error ao salvar', error);
             Alert.alert('Error', 'Falha ao salvar medicação. Tente novamente!',
@@ -222,7 +220,6 @@ export default function AddMedicacaoScreen() {
             setIsSubmitting(false);
         }
     }
-
     return (
         <View style={styles.container}>
             <LinearGradient
@@ -430,6 +427,7 @@ export default function AddMedicacaoScreen() {
                             isSubmitting && styles.saveButtonDisabled,
                         ]}
                         disabled={isSubmitting}
+                        onPress={() => handle()}
                     >
                         <LinearGradient
                             style={styles.saveButtonGradient}

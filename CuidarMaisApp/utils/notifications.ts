@@ -2,6 +2,8 @@ import * as Notifications from "expo-notifications";
 import { Platform } from "react-native";
 import { Medication } from "./storage";
 
+
+// Configura o manipulador de notificações padrão para definir como as notificações
 Notifications.setNotificationHandler({
     handleNotification: async () => ({
         shouldShowAlert: true,
@@ -10,12 +12,15 @@ Notifications.setNotificationHandler({
     })
 });
 
+//Registra o dispositivo para receber notificações push e configura os canais necessários.
 export async function registerNotificationsAsync(): Promise<string | null> {
     let token: string | null = null;
 
+    // Verifica o status atual da permissão de notificação
     const { status: existingStatus } = await Notifications.getPermissionsAsync();
     let finalStatus = existingStatus;
 
+    // Se a permissão não foi concedida, solicita ao usuário
     if (existingStatus !== 'granted') {
         const { status } = await Notifications.requestPermissionsAsync();
         finalStatus = status
@@ -45,10 +50,13 @@ export async function registerNotificationsAsync(): Promise<string | null> {
     }
 }
 
+//Agenda notificações para um medicamento com base nos horários configurados
 export async function scheduleMedication(medication: Medication): Promise<string | undefined> {
+    // Se os lembretes estiverem desativados, não agenda
     if (!medication.reminderEnable) return;
 
     try {
+         // Agenda uma notificação para cada horário definido no medicamento
         for (const time of medication.times) {
             const [hours, minutes] = time.split(':').map(Number);
             const today = new Date();
@@ -58,6 +66,7 @@ export async function scheduleMedication(medication: Medication): Promise<string
                 today.setDate(today.getDate() + 1)
             }
 
+            // Agenda a notificação com repetição diária
             const identifier = await Notifications.scheduleNotificationAsync({
                 content: {
                     title: "lembrete de medicamentos",
@@ -79,11 +88,13 @@ export async function scheduleMedication(medication: Medication): Promise<string
     }
 }
 
+//Cancela todas as notificações agendadas para um medicamento específico
 export async function cancelMedication(medicationId: string): Promise<void> {
     try {
         const scheduledNotifications = 
             await Notifications.getAllScheduledNotificationsAsync();
         
+        // Filtra e cancela apenas as notificações do medicamento especificado
         for (const notification of scheduledNotifications) {
             const data = notification.content.data as {
                 medicationId?: string;
@@ -101,6 +112,7 @@ export async function cancelMedication(medicationId: string): Promise<void> {
     }
 }
 
+//Atualiza as notificações para um medicamento (cancela as existentes e agenda novas)
 export async function updateMedication(medication: Medication): Promise<void> {
     try {
         await cancelMedication(medication.id);
