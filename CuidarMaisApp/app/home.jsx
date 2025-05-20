@@ -2,26 +2,28 @@
 import { Ionicons } from "@expo/vector-icons";
 import Fontisto from '@expo/vector-icons/Fontisto';
 import { LinearGradient } from "expo-linear-gradient";
-import { Link, useRouter } from "expo-router";
-import { useEffect, useRef } from "react";
-import { Animated, Dimensions, Modal, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Link, useFocusEffect, useRouter } from "expo-router";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { Alert, Animated, AppState, Dimensions, Modal, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import Svg, { Circle } from 'react-native-svg';
+import { registerNotificationsAsync } from "../utils/notifications";
+import { getMedication, getTodaysDoses, recordDose, sheduleMedicationReminder } from "../utils/storage";
 
 const { width } = Dimensions.get('window');
 
 // Cores principais do tema
 const COLORS = {
-  primary: '#4361EE',
-  secondary: '#3A0CA3',
-  accent: '#4CC9F0',
-  success: '#4ADE80',
-  warning: '#FBBF24',
-  danger: '#F87171',
-  background: '#F8FAFC',
-  text: '#1E293B',
-  textLight: '#64748B',
-  white: '#FFFFFF',
-  card: '#FFFFFF',
+    primary: '#4361EE',
+    secondary: '#3A0CA3',
+    accent: '#4CC9F0',
+    success: '#4ADE80',
+    warning: '#FBBF24',
+    danger: '#F87171',
+    background: '#F8FAFC',
+    text: '#1E293B',
+    textLight: '#64748B',
+    white: '#FFFFFF',
+    card: '#FFFFFF',
 };
 
 const QUICK_ACTIONS = [
@@ -102,6 +104,109 @@ function CircularProgress({ progress, totalDoses, completedDoses }) {
 
 export default function HomeScreen() {
     const router = useRouter();
+    const [todaysMedications, setTodaysMedications] = useState([]);
+    const [completedDoses, setCompletedDoses] = useState(0);
+    const [doseHistory, setDoseHistory] = useState([]);
+    const [medications, setMedications] = useState([]);
+
+    const loadMedications = useCallback(async () => {
+        try {
+            const [allMedications, todaysDoses] = await Promise.all([
+                getMedication(),
+                getTodaysDoses(),
+            ]);
+
+            setDoseHistory(todaysDoses);
+            setMedications(allMedications);
+
+            const today = new Date();
+
+            const todayMededication = allMedications.filter((med) => {
+                if (!med.duration) return false;
+
+
+                const durationValue = typeof med.duration === 'string'
+                    ? parseInt(med.duration, 10)
+                    : Math.floor(med.duration);
+
+                if (durationValue === -1) return true;
+
+                const startDate = new Date(med.startDate);
+                if (isNaN(startDate.getTime())) return false;
+
+                const endDate = new Date(startDate.getTime() + durationValue * 24 * 60 * 60 * 1000);
+                return today >= startDate && today <= endDate;
+            });
+
+            setTodaysMedications(todaysDoses);
+            const completed = todaysDoses.filter((dose) => dose.taken).length;
+            setCompletedDoses(completed);
+        } catch (error) {
+            console.error("Erro ao carregar medicações: ", error);
+        }
+    }, []);
+
+    const setupNotifications = async () => {
+        try {
+            const token = await registerNotificationsAsync();
+            if (!token) {
+                console.log("Falha ao obter o token de notificações");
+                return;
+            }
+
+            const medications = await getMedications();
+            for (const medication of medications) {
+                if (medication.reminderEnabled) {
+                    await sheduleMedicationReminder(medication);
+                }
+            }
+        } catch (error) {
+            console.error("Erro ao configurar notificações: ", error);
+        }
+    }
+
+    useEffect(() => {
+        loadMedications()
+        setupNotifications()
+
+        const subscription = AppState.addEventListener('change', (nextAppState) => {
+            if (nextAppState === 'active') {
+                loadMedications();
+            }
+        })
+        return () => {
+            subscription.remove();
+        }
+    }, []);
+
+    useFocusEffect(
+        useCallback(() => {
+            const unsubscribe = () => {
+
+            }
+
+            loadMedications();
+            return () => unsubscribe()
+        }, [loadMedications])
+    )
+
+    const handleTakeDose = async (medication) => {
+        try {
+            await recordDose(medication.id, true, new Date().toISOString());
+            await loadMedications();
+        } catch (error) {
+            console.error("Erro ao registrar dose: ", error);
+            Alert.alert("Erro", "Falha ao registrar a dose. Tente novamente.");
+        }
+    };
+
+    const isDoseTaken = (medicationId) => {
+        return doseHistory.some(
+            (dose) => dose.medicationId === medicationId && dose.taken
+        );
+    };
+
+    const progress = todaysMedications.length > 0 ? completedDoses / (todaysMedications.length * 2) : 0;
 
     return (
         <ScrollView showsVerticalScrollIndicator={false} style={styles.container}>
@@ -119,9 +224,9 @@ export default function HomeScreen() {
                         </TouchableOpacity>
                     </View>
                     <CircularProgress
-                        progress={0.5}
-                        totalDoses={10}
-                        completedDoses={5}
+                        progress={progress}
+                        totalDoses={todaysMedications.length * 2}
+                        completedDoses={completedDoses}
                     />
                 </View>
             </LinearGradient>
@@ -132,8 +237,8 @@ export default function HomeScreen() {
                         {QUICK_ACTIONS.map((action) => (
                             <Link href={action.route} key={action.label} asChild>
                                 <TouchableOpacity style={styles.actionButton}>
-                                    <LinearGradient 
-                                        colors={action.gradient} 
+                                    <LinearGradient
+                                        colors={action.gradient}
                                         style={styles.actionGradient}
                                         start={{ x: 0, y: 0 }}
                                         end={{ x: 1, y: 1 }}
@@ -528,7 +633,7 @@ const styles = StyleSheet.create({
         backgroundColor: COLORS.background,
         marginBottom: 10,
         alignItems: 'center',
-    }, 
+    },
     notificationTitle: {
         fontSize: 16,
         fontWeight: '600',

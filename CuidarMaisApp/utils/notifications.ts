@@ -1,3 +1,4 @@
+import Constants from 'expo-constants';
 import * as Notifications from "expo-notifications";
 import { Platform } from "react-native";
 import { Medication } from "./storage";
@@ -16,14 +17,20 @@ Notifications.setNotificationHandler({
 export async function registerNotificationsAsync(): Promise<string | null> {
     let token: string | null = null;
 
-    // Verifica o status atual da permissão de notificação
+    // Verifica se estamos rodando em um dispositivo físico
+    if (!Constants.expoConfig?.extra?.eas?.projectId) {
+        console.warn('Project ID not found, notifications might not work properly');
+        return null;
+    }
+
+    // Verifica o status da permissão
     const { status: existingStatus } = await Notifications.getPermissionsAsync();
     let finalStatus = existingStatus;
 
-    // Se a permissão não foi concedida, solicita ao usuário
+    // Solicita permissão se necessário
     if (existingStatus !== 'granted') {
         const { status } = await Notifications.requestPermissionsAsync();
-        finalStatus = status
+        finalStatus = status;
     }
 
     if (finalStatus !== 'granted') {
@@ -31,9 +38,13 @@ export async function registerNotificationsAsync(): Promise<string | null> {
     }
 
     try {
-        const response = await Notifications.getExpoPushTokenAsync();
+        // Obtém o token push com o projectId
+        const response = await Notifications.getExpoPushTokenAsync({
+            projectId: Constants.expoConfig.extra.eas.projectId
+        });
         token = response.data;
 
+        // Configuração para Android
         if (Platform.OS === 'android') {
             await Notifications.setNotificationChannelAsync('default', {
                 name: 'default',
