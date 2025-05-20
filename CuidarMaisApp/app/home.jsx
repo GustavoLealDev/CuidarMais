@@ -204,7 +204,7 @@ export default function HomeScreen() {
         return doseHistory.some(
             (dose) => dose.medicationId === medicationId && dose.taken
         );
-    };
+    }; 
 
     const progress = todaysMedications.length > 0 ? completedDoses / (todaysMedications.length * 2) : 0;
 
