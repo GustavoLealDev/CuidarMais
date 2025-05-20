@@ -102,6 +102,7 @@ function CircularProgress({ progress, totalDoses, completedDoses }) {
 
 export default function HomeScreen() {
     const router = useRouter();
+
     return (
         <ScrollView showsVerticalScrollIndicator={false} style={styles.container}>
             <LinearGradient colors={[COLORS.primary, COLORS.secondary]} style={styles.header}>

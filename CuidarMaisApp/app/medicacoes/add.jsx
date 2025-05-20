@@ -4,6 +4,8 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import { useState } from "react";
 import { Alert, Dimensions, Platform, ScrollView, StyleSheet, Switch, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { scheduleMedicationReminder } from "../../utils/notifications";
+import { addMedication } from "../../utils/storage";
 
 const { width } = Dimensions.get('window');
 
@@ -177,7 +179,7 @@ export default function AddMedicacaoScreen() {
         if (!form.frequency.trim()) {
             newErrors.frequency = "Digite a Frequência";
         }
-        if (!form.duration.trim()) {
+        if (typeof form.duration === 'string' ? !form.duration.trim() : !form.duration) {
             newErrors.duration = "Digite a duração";
         }
         setErrors(newErrors);
@@ -210,7 +212,7 @@ export default function AddMedicacaoScreen() {
             };
 
             await addMedication(medicationData);
-             // Agenda lembretes se estiverem ativados
+            // Agenda lembretes se estiverem ativados
             if (medicationData.reminderEnabled) {
                 await scheduleMedicationReminder(medicationData);
             }
