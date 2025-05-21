@@ -108,6 +108,8 @@ export default function HomeScreen() {
     const [completedDoses, setCompletedDoses] = useState(0);
     const [doseHistory, setDoseHistory] = useState([]);
     const [medications, setMedications] = useState([]);
+    const [showNotifications, setShowNotifications] = useState(false);
+
 
     const loadMedications = useCallback(async () => {
         try {
@@ -187,7 +189,7 @@ export default function HomeScreen() {
     useFocusEffect(
         useCallback(() => {
             loadMedications();
-            return () => {};
+            return () => { };
         }, [loadMedications])
     );
 
@@ -206,7 +208,7 @@ export default function HomeScreen() {
         return doseHistory.some(
             (dose) => dose.medicationId === medicationId && dose.taken
         );
-    }; 
+    };
 
     const progress = todaysMedications.length > 0 ? completedDoses / todaysMedications.length : 0;
 
@@ -218,7 +220,10 @@ export default function HomeScreen() {
                         <View style={{ flex: 1 }}>
                             <Text style={styles.greeting}>Progresso Diário</Text>
                         </View>
-                        <TouchableOpacity style={styles.notificationButton}>
+                        <TouchableOpacity 
+                        style={styles.notificationButton}
+                        onPress={() => setShowNotifications(true)}
+                        >
                             <Ionicons name='notifications-outline' size={24} color={COLORS.white} />
                             <View style={styles.notificationBadge}>
                                 <Text style={styles.notificationCount}></Text>
@@ -307,8 +312,8 @@ export default function HomeScreen() {
                                     <View style={styles.doseTime}>
                                         <Ionicons name='time-outline' size={16} color={COLORS.textLight} />
                                         <Text style={styles.timeText}>
-                                            {medication.times && medication.times.length > 0 
-                                                ? medication.times[0] 
+                                            {medication.times && medication.times.length > 0
+                                                ? medication.times[0]
                                                 : 'Horário não definido'}
                                         </Text>
                                     </View>
@@ -319,8 +324,8 @@ export default function HomeScreen() {
                                         <Text style={styles.takeDoseText}>Tomado</Text>
                                     </View>
                                 ) : (
-                                    <TouchableOpacity 
-                                        style={[styles.takeDoseButton, { backgroundColor: medication.color || COLORS.primary }]} 
+                                    <TouchableOpacity
+                                        style={[styles.takeDoseButton, { backgroundColor: medication.color || COLORS.primary }]}
                                         onPress={() => handleTakeDose(medication)}
                                     >
                                         <Text style={styles.takeDoseText}>Tomar</Text>
@@ -332,20 +337,47 @@ export default function HomeScreen() {
                 )}
             </View>
 
-            <Modal visible={false} transparent={true} animationType='slide'>
+            <Modal
+                visible={showNotifications}
+                animationType="slide"
+                transparent={true}
+                onRequestClose={() => setShowNotifications(false)}
+            >
                 <View style={styles.modalOverlay}>
                     <View style={styles.modalContent}>
-                        <Text style={styles.modalTitle}>Notificações</Text>
-                        <TouchableOpacity style={styles.closeButton}>
-                            <Ionicons name='close' size={24} color={COLORS.textLight} />
-                        </TouchableOpacity>
+                        <View style={styles.modalHeader}>
+                            <Text style={styles.modalTitle}>Notifications</Text>
+                            <TouchableOpacity
+                                onPress={() => setShowNotifications(false)}
+                                style={styles.closeButton}
+                            >
+                                <Ionicons name="close" size={24} color="#333" />
+                            </TouchableOpacity>
+                        </View>
+                        {todaysMedications.map((medication) => (
+                            <View key={medication.id} style={styles.notificationItem}>
+                                <View style={styles.notificationIcon}>
+                                    <Ionicons name="medical" size={24} color={medication.color} />
+                                </View>
+                                <View style={styles.notificationContent}>
+                                    <Text style={styles.notificationTitle}>
+                                        {medication.name}
+                                    </Text>
+                                    <Text style={styles.notificationMessage}>
+                                        {medication.dosage}
+                                    </Text>
+                                    <Text style={styles.notificationTime}>
+                                        {medication.times[0]}
+                                    </Text>
+                                </View>
+                            </View>
+                        ))}
                     </View>
                 </View>
             </Modal>
         </ScrollView>
     );
 }
-
 // Estilos permanecem exatamente os mesmos
 const styles = StyleSheet.create({
     container: {
