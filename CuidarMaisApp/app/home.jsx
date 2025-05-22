@@ -36,7 +36,7 @@ const QUICK_ACTIONS = [
     {
         icon: 'calendar-outline',
         label: 'Calendário',
-        route: '/calendar',
+        route: '/calendario',
         gradient: [COLORS.accent, '#3A86FF'],
     },
     {
