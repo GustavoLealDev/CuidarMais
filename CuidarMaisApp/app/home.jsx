@@ -39,12 +39,7 @@ const QUICK_ACTIONS = [
         route: '/calendario',
         gradient: [COLORS.accent, '#3A86FF'],
     },
-    {
-        icon: 'time-outline',
-        label: 'Historico',
-        route: '/history',
-        gradient: [COLORS.success, '#10B981'],
-    },
+  
 ];
 
 function CircularProgress({ progress, totalDoses, completedDoses }) {
