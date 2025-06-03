@@ -3,7 +3,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import { useCallback, useState } from "react";
-import { ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { Platform, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { getDoseHistory, getMedication, recordDose } from "../../utils/storage";
 
 const WEEKDAYS = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"];
@@ -227,3 +227,201 @@ export default function CalendarioScreen() {
     );
 }
 
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        backgroundColor: "#F8FAFC",
+    },
+    headerGradient: {
+        position: "absolute",
+        top: 0,
+        left: 0,
+        right: 0,
+        height: Platform.OS === "ios" ? 160 : 140,
+    },
+    content: {
+        flex: 1,
+        paddingTop: Platform.OS === "ios" ? 60 : 40,
+    },
+    header: {
+        flexDirection: "row",
+        alignItems: "center",
+        paddingHorizontal: 24,
+        paddingBottom: 24,
+        zIndex: 1,
+    },
+    backButton: {
+        width: 40,
+        height: 40,
+        borderRadius: 20,
+        backgroundColor: "rgba(255,255,255,0.2)",
+        justifyContent: "center",
+        alignItems: "center",
+        borderWidth: 1,
+        borderColor: "rgba(255,255,255,0.3)",
+    },
+    headerTitle: {
+        fontSize: 28,
+        fontWeight: "700",
+        color: "white",
+        marginLeft: 16,
+    },
+    calendarContainer: {
+        backgroundColor: "white",
+        borderRadius: 20,
+        margin: 20,
+        padding: 20,
+        shadowColor: "#4361EE",
+        shadowOffset: { width: 0, height: 6 },
+        shadowOpacity: 0.1,
+        shadowRadius: 12,
+        elevation: 5,
+    },
+    monthHeader: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+        marginBottom: 20,
+        paddingHorizontal: 8,
+    },
+    monthText: {
+        fontSize: 18,
+        fontWeight: "600",
+        color: "#4361EE",
+    },
+    weekdayHeader: {
+        flexDirection: "row",
+        marginBottom: 12,
+        borderBottomWidth: 1,
+        borderBottomColor: "#E2E8F0",
+        paddingBottom: 8,
+    },
+    weekdayText: {
+        flex: 1,
+        textAlign: "center",
+        color: "#64748B",
+        fontWeight: "600",
+        fontSize: 14,
+    },
+    calendarWeek: {
+        flexDirection: "row",
+        marginBottom: 8,
+    },
+    calendarDay: {
+        flex: 1,
+        aspectRatio: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        borderRadius: 12,
+        margin: 2,
+    },
+    dayText: {
+        fontSize: 16,
+        color: "#334155",
+        fontWeight: "500",
+    },
+    today: {
+        backgroundColor: "#4361EE",
+    },
+    todayText: {
+        color: "white",
+        fontWeight: "600",
+    },
+    hasEvents: {
+        position: "relative",
+    },
+    eventDot: {
+        width: 6,
+        height: 6,
+        borderRadius: 3,
+        backgroundColor: "#4361EE",
+        position: "absolute",
+        bottom: 8,
+    },
+    scheduleContainer: {
+        flex: 1,
+        backgroundColor: "white",
+        borderTopLeftRadius: 28,
+        borderTopRightRadius: 28,
+        padding: 24,
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: -4 },
+        shadowOpacity: 0.05,
+        shadowRadius: 12,
+        elevation: 5,
+    },
+    scrollContainer: {
+        paddingBottom: 24,
+    },
+    scheduleTitle: {
+        fontSize: 22,
+        fontWeight: "700",
+        color: "#4361EE",
+        marginBottom: 20,
+    },
+    medicationCard: {
+        flexDirection: "row",
+        alignItems: "center",
+        backgroundColor: "white",
+        borderRadius: 16,
+        padding: 16,
+        marginBottom: 16,
+        borderWidth: 1,
+        borderColor: "#E2E8F0",
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.05,
+        shadowRadius: 8,
+        elevation: 2,
+    },
+    medicationColor: {
+        width: 16,
+        height: 48,
+        borderRadius: 8,
+        marginRight: 16,
+    },
+    medicationInfo: {
+        flex: 1,
+    },
+    medicationName: {
+        fontSize: 16,
+        fontWeight: "600",
+        color: "#1E293B",
+        marginBottom: 4,
+    },
+    medicationDosage: {
+        fontSize: 14,
+        color: "#64748B",
+        marginBottom: 4,
+    },
+    medicationTime: {
+        fontSize: 14,
+        fontWeight: "500",
+        color: "#4361EE",
+    },
+    takeDoseButton: {
+        paddingVertical: 8,
+        paddingHorizontal: 16,
+        borderRadius: 12,
+        backgroundColor: "#4361EE",
+    },
+    takeDoseText: {
+        color: "white",
+        fontWeight: "600",
+        fontSize: 14,
+    },
+    takenBadge: {
+        flexDirection: "row",
+        alignItems: "center",
+        backgroundColor: "#E8F5E9",
+        paddingHorizontal: 12,
+        paddingVertical: 8,
+        borderRadius: 12,
+    },
+    takenText: {
+        color: "#10B981",
+        fontWeight: "600",
+        fontSize: 14,
+        marginLeft: 4,
+    },
+});
