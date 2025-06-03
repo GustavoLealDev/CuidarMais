@@ -58,4 +58,7 @@ export default function CalendarioScreen() {
     );
 }
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+
+    
+});
